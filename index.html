@@ -189,7 +189,15 @@ footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px solid var(--lin
     <h2>How the numbers are made</h2>
     <p>Sunspots are detected in the Mastcam-Z image alone. SDO/HMI is used afterwards, only as the reference.</p>
     <p>A Mastcam-Z sunspot covers a few pixels, so its shape is not resolved. What the camera measures is the light
-      the spot removes.</p>
+      the spot removes. From this, three areas are given, all in millionths of the solar hemisphere (MSH) and
+      corrected for foreshortening:</p>
+    <ul>
+      <li><strong>A<sub>def</sub></strong>, the black-equivalent area: the area of a perfectly black spot that would
+        remove the same light. It needs no model.</li>
+      <li><strong>S</strong>, the total spot area (umbra and penumbra): A<sub>def</sub> divided by <span id="dnote"></span>,
+        the average darkening of a typical sunspot at the filter wavelength.</li>
+      <li><strong>U</strong>, the umbral area: a typical umbra, <span id="funote"></span> of the spot.</li>
+    </ul>
     <p>The HMI image provides each group’s total area and umbral area, and its light deficit converted to the
       Mastcam-Z wavelength (HMI A<sub>def</sub>). A<sub>def</sub> compared with HMI A<sub>def</sub> is the most
       direct comparison, because both measure the same quantity in the same band.</p>
