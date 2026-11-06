@@ -1,0 +1,34 @@
+Mastcam-Z (Perseverance, Mars) vs SDO/HMI (Earth): sunspot summary
+======================================================================
+Image        ZR7_0634_0723226501_428RAD_N0310000ZCAM01058_1100LMA01.IMG
+Time         2022-12-02 04:24:02 UTC    sol 634    LTST 12:32:05
+Filter       ZCAM_R7_880NM_ND5 (880 nm)
+Geometry     Mars–Earth separation +3.1°   Sun–Mars 1.527 AU   light time 762 s
+             L0/B0 seen from Mars   40.92° / +1.11°
+             L0/B0 seen from Earth  37.80° / +0.77°
+Image        disk radius 45.2 px (1 px = 1.27° at disk centre), PSF sigma 0.89 px, noise 1.58 % per pixel
+HMI          2022-12-02T04:19:08 (offset +25 s removed by differential rotation)
+Threshold    S/N >= 6
+
+Areas are in MSH (millionths of the solar hemisphere), corrected for foreshortening.
+  A_def  Mastcam-Z black-equivalent area: area of a perfectly black spot removing the same light
+  S      Mastcam-Z total spot area   S = A_def / d,  d = 0.228 (mean deficit of a typical spot at 880 nm)
+  U      Mastcam-Z umbral area       U = 0.20 x S = 0.88 x A_def
+  HMI A_def  HMI light deficit converted to 880 nm (same quantity as A_def)
+Positions: lat = heliographic latitude, lon = Stonyhurst longitude (0 = towards Earth),
+Carr = Carrington longitude, mu = cosine of the angle from disk centre as seen from Mars.
+
+1. MASTCAM-Z DETECTIONS (S/N >= 6): 0
+   Weaker candidates (3 <= S/N < 6), not counted as detections: 7
+
+2. HMI SUNSPOT GROUPS VISIBLE FROM MARS (area >= 10 MSH): 5   (+3 smaller)
+   ID  NOAA        lat     lon   Carr    mu   total  umbra  A_def  zone  seen by Mastcam-Z
+   H1  AR 13153  -16.0   -67.1  330.7  0.32     603     67    123  no    no
+   H2  AR 13153  -17.7   -77.5  320.4  0.15     578     66    113  no    no
+   H3  AR 13157  +25.1   -75.6  322.3  0.18     254     27     48  no    no
+   H4  AR 13154  -38.0    +7.8   45.7  0.77      67     16     16  yes   no
+   H5  AR 13155  +21.2   -14.6   23.2  0.89      45      7      9  yes   no
+   zone = inside the evaluation zone (rho <= 0.9 seen from Mars, mu >= 0.2 seen from Earth)
+
+3. MASTCAM-Z vs HMI FOR MATCHED SPOTS: 0
+

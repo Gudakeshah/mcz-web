@@ -1,0 +1,50 @@
+Mastcam-Z (Perseverance, Mars) vs SDO/HMI (Earth): sunspot summary
+======================================================================
+Image        ZR7_0639_0723673603_269RAD_N0310000ZCAM01058_1100LMA01.IMG
+Time         2022-12-07 08:35:48 UTC    sol 639    LTST 13:25:33
+Filter       ZCAM_R7_880NM_ND5 (880 nm)
+Geometry     Mars–Earth separation +0.5°   Sun–Mars 1.533 AU   light time 765 s
+             L0/B0 seen from Mars  330.18° / +0.85°
+             L0/B0 seen from Earth 329.60° / +0.11°
+Image        disk radius 45.0 px (1 px = 1.27° at disk centre), PSF sigma 0.91 px, noise 1.62 % per pixel
+HMI          2022-12-07T08:31:08 (offset +7 s removed by differential rotation)
+Threshold    S/N >= 6
+
+Areas are in MSH (millionths of the solar hemisphere), corrected for foreshortening.
+  A_def  Mastcam-Z black-equivalent area: area of a perfectly black spot removing the same light
+  S      Mastcam-Z total spot area   S = A_def / d,  d = 0.228 (mean deficit of a typical spot at 880 nm)
+  U      Mastcam-Z umbral area       U = 0.20 x S = 0.88 x A_def
+  HMI A_def  HMI light deficit converted to 880 nm (same quantity as A_def)
+Positions: lat = heliographic latitude, lon = Stonyhurst longitude (0 = towards Earth),
+Carr = Carrington longitude, mu = cosine of the angle from disk centre as seen from Mars.
+
+1. MASTCAM-Z DETECTIONS (S/N >= 6): 3
+   ID     S/N    lat     lon   Carr    mu        A_def    S (total)   U (umbra)  HMI
+   C1    26.8  -16.3    +3.3  332.9  0.95    115 ± 6      506 ± 28    101 ± 6    H1
+   C2    11.7  +17.1   -23.8  305.9  0.88     55 ± 7      240 ± 31     48 ± 6    H3
+   C3    10.0  -18.4   -10.2  319.5  0.93     44 ± 7      194 ± 31     39 ± 6    H2
+   Weaker candidates (3 <= S/N < 6), not counted as detections: 7
+
+2. HMI SUNSPOT GROUPS VISIBLE FROM MARS (area >= 10 MSH): 11   (+3 smaller)
+   ID  NOAA        lat     lon   Carr    mu   total  umbra  A_def  zone  seen by Mastcam-Z
+   H1  AR 13153  -16.4    +3.3  332.9  0.95     673    147    183  yes   yes, C1 (S/N 26.8)
+   H2  AR 13153  -17.9   -10.2  319.4  0.93     334     54     74  yes   yes, C3 (S/N 10.0)
+   H3  AR 13157  +16.6   -25.4  304.3  0.87     281     42     63  yes   yes, C2 (S/N 11.7)
+   H4  AR 13160  +21.7   -70.6  259.0  0.30     112     12     22  no    no
+   H5  AR 13157  +25.2    -8.5  321.1  0.90     106     14     21  yes   no
+   H6  AR 13155  +22.6   +56.3   25.9  0.52      94     13     18  yes   no
+   H7  AR 13158  +25.1   +20.6  350.2  0.86      62      4     11  yes   no
+   H8  AR 13158  +23.2   +29.3  358.9  0.81      29      4      6  yes   no
+   H9  AR 13155  +22.7   +51.2   20.9  0.59      26      0      4  yes   no
+   H10 AR 13157  +24.5   -19.3  310.3  0.86      16      1      3  yes   no (best S/N 5.3)
+   H11 AR 13159  +29.4   -60.7  269.0  0.42      12      0      2  no    no
+   zone = inside the evaluation zone (rho <= 0.9 seen from Mars, mu >= 0.2 seen from Earth)
+
+3. MASTCAM-Z vs HMI FOR MATCHED SPOTS: 3
+   Mastcam-Z HMI            S  total  S/total       U  umbra  U/umbra    A_def    HMI  ratio
+   C1        H1           506    673     0.75     101    147     0.69      115    183   0.63
+   C2        H3           240    281     0.85      48     42     1.13       55     63   0.86
+   C3        H2           194    334     0.58      39     54     0.72       44     74   0.60
+   Median ratios: S/total 0.75   U/umbra 0.72   A_def/HMI A_def 0.63   A_def/umbra 0.82
+   A ratio of 1 means Mastcam-Z reproduces the HMI value.
+
