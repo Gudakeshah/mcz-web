@@ -56,11 +56,15 @@ h1 { font: 600 clamp(2rem, 5vw, 3.4rem)/1.02 var(--cond); letter-spacing: -0.01e
 .day.sel { background: var(--ink); color: var(--bg); border-bottom-color: var(--mars); }
 .day .dots { display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; max-width: 34px; }
 .day .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mars); }
+.day .ring { width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid var(--mars); }
 .day.sel .dot { background: var(--mars-soft); }
+.day.sel .ring { border-color: var(--mars-soft); }
 .day .none { width: 10px; height: 2px; background: var(--line); border-radius: 1px; margin-top: 2px; }
 .timeline .key { font-size: 0.85rem; color: var(--muted); margin: 6px 0 0; }
-.timeline .key .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--mars);
+.timeline .key .dot, .timeline .key .ring { display: inline-block; width: 7px; height: 7px; border-radius: 50%;
   margin: 0 4px 1px 0; vertical-align: middle; }
+.timeline .key .dot { background: var(--mars); }
+.timeline .key .ring { border: 1.5px solid var(--mars); margin-left: 12px; }
 
 /* observation */
 section.obs { margin: 26px 0 0; }
@@ -78,7 +82,12 @@ dl.facts div { background: var(--surface); padding: 10px 14px; }
 dl.facts dt { font-size: 0.82rem; color: var(--muted); }
 dl.facts dd { margin: 2px 0 0; font: 500 1.15rem var(--cond); }
 dd.m { color: var(--mars); } dd.e { color: var(--earth); }
-figure { margin: 18px 0 0; }
+.cam { margin: 26px 0 0; }
+.cam h3, .geo h3 { font: 600 1.25rem var(--cond); margin: 0 0 8px; }
+.cam h3 span { font: 400 0.9rem var(--sans); color: var(--muted); margin-left: 8px; }
+figure { margin: 0; }
+.geo { margin: 26px 0 0; }
+p.caption { font-size: 0.9rem; color: var(--muted); margin: 10px 0 0; max-width: 85ch; }
 figure .mat { background: var(--mat); border-radius: 8px; padding: 10px; border: 1px solid var(--line); }
 figure img { display: block; width: 100%; height: auto; cursor: zoom-in; }
 figcaption { font-size: 0.9rem; color: var(--muted); margin-top: 8px; max-width: 80ch; }
@@ -93,7 +102,9 @@ pre.txt { margin: 10px 0 0; background: var(--surface); border: 1px solid var(--
 
 /* campaign table */
 section.campaign { margin: 48px 0 0; }
-section.campaign h2, section.notes h2 { font: 600 1.6rem/1.1 var(--cond); margin: 0 0 6px; }
+section.campaign h2, section.notes h2, section.source h2 { font: 600 1.6rem/1.1 var(--cond); margin: 0 0 6px; }
+section.campaign h3 { font: 600 1.2rem var(--cond); margin: 22px 0 8px; }
+section.source { margin: 48px 0 0; max-width: 78ch; }
 .campaign p { max-width: 75ch; color: var(--muted); margin: 0 0 14px; }
 .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
 table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
@@ -134,7 +145,7 @@ footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px solid var(--lin
   <p class="lede" id="lede"></p>
   <div class="timeline" aria-label="Observation dates">
     <div class="rail" id="rail" role="list"></div>
-    <p class="key"><span class="dot"></span>one dot per Mastcam-Z sunspot detection; dashed days have no observation</p>
+    <p class="key" id="key"></p>
   </div>
 </header>
 
@@ -147,63 +158,44 @@ footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px solid var(--lin
       <button class="nav" id="next" aria-label="Next observation">Next ›</button>
     </div>
     <dl class="facts" id="facts"></dl>
-    <figure>
-      <div class="mat" id="fig-overview"></div>
-      <figcaption>(a) Mastcam-Z image with solar north up and west to the right, and its detections;
-        (b) detection significance; (c) the SDO/HMI image from Earth, reprojected to the rover’s view,
-        with the HMI sunspot groups (green: detected by Mastcam-Z, orange: not detected).</figcaption>
-    </figure>
-    <figure>
-      <div class="mat" id="fig-geometry"></div>
-      <figcaption>Where Mars and Earth stood: positions around the Sun (left), and the solar hemispheres each
-        planet could see (right).</figcaption>
-    </figure>
-    <div class="summary">
-      <div class="summary-bar">
-        <h3>Summary</h3>
-        <button class="btn" id="copy">Copy text</button>
-        <a class="btn" id="download" download>Download summary.txt</a>
-      </div>
-      <pre class="txt" id="txt"></pre>
+    <div id="cams"></div>
+    <p class="caption">In each camera figure: (a) Mastcam-Z image with solar north up and west to the right, a 15°
+      heliographic grid, and its detections; (b) detection significance; (c) the SDO/HMI image from Earth,
+      reprojected to the rover’s view, with the HMI sunspot groups (green: detected by Mastcam-Z, orange: not
+      detected).</p>
+    <div class="geo">
+      <h3>Where Mars and Earth stood</h3>
+      <figure><div class="mat" id="fig-geometry"></div></figure>
+      <p class="caption">Positions around the Sun (left), and the solar hemispheres each planet could see (right).
+        The geometry is the same for both cameras.</p>
     </div>
+    <div id="summaries"></div>
   </section>
 
   <section class="campaign" id="campaign">
     <h2>All observations</h2>
     <p id="campaign-text"></p>
-    <div class="tablewrap">
-      <table>
-        <thead><tr>
-          <th scope="col">Date and time (UTC)</th><th scope="col">Sol</th><th scope="col">Mars–Earth separation</th>
-          <th scope="col">Mastcam-Z detections</th><th scope="col">HMI groups in zone</th>
-          <th scope="col">Of these seen</th><th scope="col">S / HMI total</th><th scope="col">U / HMI umbra</th>
-          <th scope="col">A<sub>def</sub> / HMI A<sub>def</sub></th>
-        </tr></thead>
-        <tbody id="rows"></tbody>
-        <tfoot id="foot"></tfoot>
-      </table>
-    </div>
+    <div id="tables"></div>
   </section>
 
   <section class="notes" id="notes">
     <h2>How the numbers are made</h2>
-    <p>Sunspots are detected in the Mastcam-Z image alone. SDO/HMI is used afterwards, only as the reference.</p>
+    <p>Sunspots are detected in each Mastcam-Z image alone. SDO/HMI is used afterwards, only as the reference.</p>
     <p>A Mastcam-Z sunspot covers a few pixels, so its shape is not resolved. What the camera measures is the light
-      the spot removes. From this, three areas are given, all in millionths of the solar hemisphere (MSH) and
-      corrected for foreshortening:</p>
-    <ul>
-      <li><strong>A<sub>def</sub></strong>, the black-equivalent area: the area of a perfectly black spot that would
-        remove the same light. It needs no model.</li>
-      <li><strong>S</strong>, the total spot area (umbra and penumbra): A<sub>def</sub> divided by <span id="dnote"></span>,
-        the average darkening of a typical sunspot at the filter wavelength.</li>
-      <li><strong>U</strong>, the umbral area: a typical umbra, <span id="funote"></span> of the spot.</li>
-    </ul>
-    <p>The HMI image provides each group’s total area and umbral area, and its light deficit converted to the
-      Mastcam-Z wavelength (HMI A<sub>def</sub>). A<sub>def</sub> compared with HMI A<sub>def</sub> is the most
-      direct comparison, because both measure the same quantity in the same band.</p>
+      the spot removes, expressed as the area of a perfectly black spot that would remove the same light
+      (A<sub>def</sub>). The umbral area follows from it as U = k × A<sub>def</sub>, where k combines the mean
+      darkening of a typical sunspot in the camera’s band with a typical umbral fraction of
+      <span id="funote"></span>. <span id="knote"></span></p>
+    <p>The Mastcam-Z umbral area is compared with the HMI umbral area: the area of the HMI pixels darker than 0.55
+      of the quiet Sun. Areas are in millionths of the solar hemisphere (MSH) and corrected for foreshortening.</p>
     <p>Positions are heliographic latitude and Stonyhurst longitude (0° points towards Earth) at the Mastcam-Z time.
       A detection must reach the significance threshold given in each summary. The threshold was set on the near
       side so that false detections are rare.</p>
+  </section>
+
+  <section class="source" id="source" hidden>
+    <h2>Reference and contact</h2>
+    <p id="source-text"></p>
   </section>
 </main>
 
@@ -216,102 +208,140 @@ footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px solid var(--lin
 
 <script>
 (function () {
-  const S = window.SITE, O = S.observations, C = S.campaign;
+  const S = window.SITE, O = S.slots, C = S.campaign;
+  const EYES = ['R', 'L'].filter((e) => C.eyes[e]);
   const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text !== undefined) n.textContent = text; return n; };
   const fmt = (v, d = 2) => (v === null || v === undefined || Number.isNaN(v)) ? '—' : Number(v).toFixed(d);
   const sign = (v) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1) + '°';
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const longDate = (s) => { const [y, m, d] = s.split('-').map(Number); return d + ' ' + months[m - 1] + ' ' + y; };
+  const short = (e) => (e === 'R' ? 'Right' : 'Left');
 
   document.title = S.title;
   $('title').textContent = S.title;
   $('lede').innerHTML = S.subtitle.replace('Mastcam-Z', '<span class="m">Mastcam-Z</span>')
     .replace('SDO/HMI', '<span class="e">SDO/HMI</span>') + '.';
-  $('dnote').textContent = 'd = ' + C.deficits.join(' or ');
   $('funote').textContent = Math.round(C.f_u * 100) + ' %';
+  $('knote').textContent = EYES.map((e) => 'For the ' + short(e).toLowerCase() + ' camera, k = ' + fmt(C.eyes[e].k_umbra) + '.').join(' ');
+  $('key').innerHTML = (C.eyes.R ? '<span class="dot"></span>right-camera detection' + (C.eyes.L ? ', ' : '') : '') +
+    (C.eyes.L ? '<span class="ring"></span>left-camera detection' : '') + '; dashed days have no observation';
 
   // ---- timeline -------------------------------------------------------------------
   const byDay = {};
   O.forEach((o, i) => { (byDay[o.date] = byDay[o.date] || []).push(i); });
   const d0 = new Date(C.start + 'T00:00:00Z'), d1 = new Date(C.end + 'T00:00:00Z');
-  const rail = $('rail');
   for (let t = d0; t <= d1; t = new Date(t.getTime() + 86400000)) {
     const key = t.toISOString().slice(0, 10);
     const idx = byDay[key] || [];
-    const b = document.createElement('button');
-    b.className = 'day' + (idx.length ? ' has' : '');
+    const b = el('button', 'day' + (idx.length ? ' has' : ''));
     b.setAttribute('role', 'listitem');
     b.dataset.day = key;
-    const label = document.createElement('span');
-    label.textContent = String(t.getUTCDate()).padStart(2, '0');
-    b.appendChild(label);
+    b.appendChild(el('span', '', String(t.getUTCDate()).padStart(2, '0')));
     if (idx.length) {
-      const n = idx.reduce((a, i) => a + (O[i].n_det || 0), 0);
-      const dots = document.createElement('span'); dots.className = 'dots';
-      for (let k = 0; k < Math.min(n, 12); k++) { const s = document.createElement('span'); s.className = 'dot'; dots.appendChild(s); }
+      const count = (e) => Math.max(0, ...idx.map((i) => (O[i].eyes[e] ? O[i].eyes[e].n_det : 0)));
+      const nR = count('R'), nL = count('L');
+      const dots = el('span', 'dots');
+      for (let k = 0; k < Math.min(nR, 6); k++) dots.appendChild(el('span', 'dot'));
+      for (let k = 0; k < Math.min(nL, 6); k++) dots.appendChild(el('span', 'ring'));
       b.appendChild(dots);
-      b.setAttribute('aria-label', longDate(key) + ': ' + n + ' Mastcam-Z detection' + (n === 1 ? '' : 's'));
+      b.setAttribute('aria-label', longDate(key) + ': right camera ' + nR + ', left camera ' + nL + ' detections');
       b.addEventListener('click', () => select(idx[0]));
     } else {
-      const s = document.createElement('span'); s.className = 'none'; b.appendChild(s);
+      b.appendChild(el('span', 'none'));
       b.disabled = true; b.setAttribute('aria-label', longDate(key) + ': no observation');
     }
-    rail.appendChild(b);
+    $('rail').appendChild(b);
   }
 
-  // ---- picker and table --------------------------------------------------------------
+  // ---- picker and tables (one per camera) ------------------------------------------------
   O.forEach((o, i) => {
-    const op = document.createElement('option');
-    op.value = i; op.textContent = o.date + ' ' + o.time + ' UTC' + (o.sol !== null ? ', sol ' + o.sol : '');
-    $('pick').appendChild(op);
-    const tr = document.createElement('tr');
-    tr.tabIndex = 0;
-    tr.innerHTML = '<td>' + o.date + ' ' + o.time + '</td><td>' + (o.sol ?? '—') + '</td><td>' + sign(o.sep) + '</td>' +
-      '<td class="m">' + o.n_det + '</td><td class="e">' + o.n_groups_zone + '</td><td>' + o.n_seen + '</td>' +
-      '<td>' + fmt(o.r_total) + '</td><td>' + fmt(o.r_umbra) + '</td><td>' + fmt(o.r_def) + '</td>';
-    tr.addEventListener('click', () => { select(i); $('obs').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
-    tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') tr.click(); });
-    $('rows').appendChild(tr);
+    const op = el('option', '', o.date + ' ' + o.time + ' UTC' + (o.sol !== null ? ', sol ' + o.sol : ''));
+    op.value = i; $('pick').appendChild(op);
   });
-  $('foot').innerHTML = '<tr><td>Median of ' + C.n_pairs + ' matched spots</td><td></td><td></td><td></td><td></td><td></td>' +
-    '<td>' + fmt(C.r_total) + '</td><td>' + fmt(C.r_umbra) + '</td><td>' + fmt(C.r_def) + '</td></tr>';
-  $('campaign-text').textContent = O.length + ' Mastcam-Z observations. The last three columns are median ratios of ' +
-    'Mastcam-Z to HMI for the matched spots of each observation; 1 means Mastcam-Z reproduces HMI. ' +
-    'Select a row to show that observation.';
+  const rowsOf = {};
+  EYES.forEach((e) => {
+    const info = C.eyes[e];
+    $('tables').appendChild(el('h3', '', info.label));
+    const wrap = el('div', 'tablewrap'); const table = el('table');
+    table.innerHTML = '<thead><tr><th scope="col">Date and time (UTC)</th><th scope="col">Sol</th>' +
+      '<th scope="col">Mars–Earth separation</th><th scope="col">Mastcam-Z detections</th>' +
+      '<th scope="col">HMI detections</th><th scope="col">Of these seen</th>' +
+      '<th scope="col">Mastcam-Z / HMI umbra</th></tr></thead>';
+    const tb = el('tbody'); rowsOf[e] = [];
+    O.forEach((o, i) => {
+      const c = o.eyes[e]; if (!c) return;
+      const tr = el('tr'); tr.tabIndex = 0; tr.dataset.slot = i;
+      tr.innerHTML = '<td>' + o.date + ' ' + c.time.slice(0, 5) + '</td><td>' + (o.sol ?? '—') + '</td><td>' + sign(o.sep) + '</td>' +
+        '<td class="m">' + c.n_det + '</td><td class="e">' + c.n_groups_zone + '</td><td>' + c.n_seen + '</td>' +
+        '<td>' + fmt(c.r_umbra) + '</td>';
+      tr.addEventListener('click', () => { select(i); $('obs').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
+      tr.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') tr.click(); });
+      tb.appendChild(tr); rowsOf[e].push(tr);
+    });
+    table.appendChild(tb);
+    const tf = el('tfoot');
+    tf.innerHTML = '<tr><td>Median of ' + info.n_pairs + ' matched spots</td><td></td><td></td><td></td><td></td><td></td><td>' + fmt(info.r_umbra) + '</td></tr>';
+    table.appendChild(tf); wrap.appendChild(table); $('tables').appendChild(wrap);
+  });
+  $('campaign-text').textContent = 'One table per camera. HMI detections are the HMI sunspot groups inside the evaluation zone; ' +
+    'the last column is the median ratio of the Mastcam-Z umbral area to the HMI umbral area for the matched spots ' +
+    '(1 means Mastcam-Z reproduces HMI). Select a row to show that observation.';
 
   // ---- one observation ------------------------------------------------------------------
-  function figure(el, src, alt) {
-    el.innerHTML = '';
-    if (!src) { const p = document.createElement('p'); p.className = 'missing'; p.textContent = 'Figure not available for this observation.'; el.appendChild(p); return; }
-    const img = document.createElement('img'); img.src = src; img.alt = alt; img.loading = 'lazy';
+  function figure(box, src, alt) {
+    box.innerHTML = '';
+    if (!src) { box.appendChild(el('p', 'missing', 'Figure not available for this observation.')); return; }
+    const img = el('img'); img.src = src; img.alt = alt; img.loading = 'lazy';
     img.addEventListener('click', () => { $('lightbox-img').src = src; $('lightbox-img').alt = alt; $('lightbox').classList.add('open'); $('close').focus(); });
-    el.appendChild(img);
+    box.appendChild(img);
   }
-  let cur = -1, blobUrl = null;
+  let cur = -1, blobs = [];
   function select(i) {
     if (i < 0 || i >= O.length) return;
     cur = i; const o = O[i];
     $('obs-title').innerHTML = longDate(o.date) + '<small>' + o.time + ' UTC' + (o.sol !== null ? ', sol ' + o.sol : '') + '</small>';
     $('pick').value = i;
     $('prev').disabled = i === 0; $('next').disabled = i === O.length - 1;
-    const facts = [
-      ['Mastcam-Z detections', o.n_det + (o.n_weak ? ' (and ' + o.n_weak + ' weaker)' : ''), 'm'],
-      ['HMI groups in the zone', o.n_groups_zone + ', ' + o.n_seen + ' seen from Mars', 'e'],
-      ['Mars–Earth separation', sign(o.sep), ''],
-      ['Filter', o.filter.replace('ZCAM_', '') + ', ' + Math.round(o.wavelength) + ' nm', ''],
-      ['Image noise', (o.noise * 100).toFixed(2) + ' % per pixel', ''],
-      ['HMI image', o.hmi.replace('T', ' ').slice(0, 16) + ' UTC', 'e'],
-    ];
+    const facts = [];
+    EYES.forEach((e) => {
+      const c = o.eyes[e];
+      facts.push([short(e) + ' camera', c ? c.n_det + ' detection' + (c.n_det === 1 ? '' : 's') + ', ' + c.n_seen + ' of ' + c.n_groups_zone + ' HMI groups seen' : 'no image', 'm']);
+    });
+    facts.push(['Mastcam-Z / HMI umbra', EYES.map((e) => short(e).toLowerCase() + ' ' + (o.eyes[e] ? fmt(o.eyes[e].r_umbra) : '—')).join(', '), '']);
+    facts.push(['Mars–Earth separation', sign(o.sep), '']);
+    facts.push(['HMI image', o.hmi.replace('T', ' ').slice(0, 16) + ' UTC', 'e']);
     $('facts').innerHTML = facts.map(([k, v, c]) => '<div><dt>' + k + '</dt><dd class="' + c + '">' + v + '</dd></div>').join('');
-    figure($('fig-overview'), o.overview, 'Mastcam-Z image, detection significance and reprojected HMI image for ' + o.utc);
+
+    blobs.forEach((b) => URL.revokeObjectURL(b)); blobs = [];
+    $('cams').innerHTML = ''; $('summaries').innerHTML = '';
+    EYES.forEach((e) => {
+      const c = o.eyes[e]; if (!c) return;
+      const cam = el('div', 'cam');
+      const h = el('h3', '', c.label); h.appendChild(el('span', '', c.time + ' UTC, noise ' + (c.noise * 100).toFixed(2) + ' % per pixel'));
+      cam.appendChild(h);
+      const fig = el('figure'); const mat = el('div', 'mat'); fig.appendChild(mat); cam.appendChild(fig);
+      figure(mat, c.overview, c.label + ': Mastcam-Z image, detection significance and reprojected HMI image for ' + o.utc);
+      $('cams').appendChild(cam);
+
+      const sum = el('div', 'summary'); const bar = el('div', 'summary-bar');
+      bar.appendChild(el('h3', '', 'Summary, ' + c.label.charAt(0).toLowerCase() + c.label.slice(1)));
+      const copy = el('button', 'btn', 'Copy text');
+      copy.addEventListener('click', () => {
+        const done = () => { copy.textContent = 'Copied'; setTimeout(() => { copy.textContent = 'Copy text'; }, 1500); };
+        try { navigator.clipboard.writeText(c.summary).then(done, () => {}); } catch (err) { /* clipboard not available */ }
+      });
+      const dl = el('a', 'btn', 'Download summary.txt');
+      if (c.summary_file) { dl.href = c.summary_file; }
+      else { const u = URL.createObjectURL(new Blob([c.summary + '\n'], { type: 'text/plain' })); blobs.push(u); dl.href = u; }
+      dl.setAttribute('download', c.stem + '_summary.txt');
+      bar.appendChild(copy); bar.appendChild(dl); sum.appendChild(bar);
+      sum.appendChild(el('pre', 'txt', c.summary));
+      $('summaries').appendChild(sum);
+    });
     figure($('fig-geometry'), o.geometry, 'Positions of Mars and Earth and the visible solar hemispheres for ' + o.utc);
-    $('txt').textContent = o.summary;
-    if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
-    if (o.summary_file) { $('download').href = o.summary_file; }
-    else { blobUrl = URL.createObjectURL(new Blob([o.summary + '\n'], { type: 'text/plain' })); $('download').href = blobUrl; }
-    $('download').setAttribute('download', o.stem + '_summary.txt');
     document.querySelectorAll('.day').forEach((b) => b.classList.toggle('sel', b.dataset.day === o.date));
-    document.querySelectorAll('#rows tr').forEach((tr, k) => tr.classList.toggle('sel', k === i));
+    EYES.forEach((e) => rowsOf[e].forEach((tr) => tr.classList.toggle('sel', Number(tr.dataset.slot) === i)));
     if (location.hash.slice(1) !== o.key) history.replaceState(null, '', '#' + o.key);
   }
   $('prev').addEventListener('click', () => select(cur - 1));
@@ -325,19 +355,34 @@ footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px solid var(--lin
   });
   $('close').addEventListener('click', () => $('lightbox').classList.remove('open'));
   $('lightbox').addEventListener('click', (e) => { if (e.target === $('lightbox')) $('close').click(); });
-  $('copy').addEventListener('click', () => {
-    const done = () => { $('copy').textContent = 'Copied'; setTimeout(() => { $('copy').textContent = 'Copy text'; }, 1500); };
-    try { navigator.clipboard.writeText(O[cur].summary).then(done, () => {}); } catch (err) { /* clipboard not available */ }
-  });
   function fromHash() {
     const k = location.hash.slice(1);
     const i = O.findIndex((o) => o.key === k);
     return i >= 0 ? i : 0;
   }
   window.addEventListener('hashchange', () => select(fromHash()));
-  let foot = 'Generated ' + S.generated + '. Mastcam-Z data: NASA Mars 2020, Mastcam-Z team (PDS). SDO/HMI data: NASA SDO and the HMI science team (JSOC).';
-  $('foot-note').textContent = (S.author ? S.author + '. ' : '') + foot;
-  if (S.repo_url) { const a = document.createElement('a'); a.href = S.repo_url; a.textContent = ' Analysis code.'; $('foot-note').appendChild(a); }
+
+  // ---- reference, contact, footer ------------------------------------------------------------
+  if (S.reference || S.contact) {
+    const p = $('source-text');
+    if (S.reference) {
+      p.appendChild(document.createTextNode('Reference: '));
+      const a = el('a', '', S.reference.label); a.href = S.reference.url; a.rel = 'noopener'; a.target = '_blank';
+      p.appendChild(a); p.appendChild(document.createTextNode('. '));
+    }
+    if (S.contact) {
+      p.appendChild(document.createTextNode('For more details or support, contact ' + (S.contact.name || '')));
+      if (S.contact.email) {
+        p.appendChild(document.createTextNode(S.contact.name ? ' (' : ''));
+        const m = el('a', '', S.contact.email); m.href = 'mailto:' + S.contact.email; p.appendChild(m);
+        p.appendChild(document.createTextNode(S.contact.name ? ').' : '.'));
+      } else { p.appendChild(document.createTextNode('.')); }
+    }
+    $('source').hidden = false;
+  }
+  $('foot-note').textContent = (S.author ? S.author + '. ' : '') + 'Generated ' + S.generated +
+    '. Mastcam-Z data: NASA Mars 2020, Mastcam-Z team (PDS). SDO/HMI data: NASA SDO and the HMI science team (JSOC).';
+  if (S.repo_url) { const a = el('a', '', ' Analysis code.'); a.href = S.repo_url; $('foot-note').appendChild(a); }
   select(fromHash());
 })();
 </script>
