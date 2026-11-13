@@ -1,7 +1,7 @@
 window.SITE = {
-  "title": "Solar Observations from MastCam-Z",
+  "title": "Sunspots seen from Mars",
   "subtitle": "Perseverance Mastcam-Z (right and left cameras) compared with SDO/HMI, 1 December 2022 to 15 December 2022",
-  "author": Kere Ravi Arjun, Shea Hess Webber,
+  "author": null,
   "repo_url": null,
   "reference": {
     "url": "https://ui.adsabs.harvard.edu/abs/2025AGUFMSH13D2129A/abstract",
