@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Solar Observations from MastCam-Z.</title>
+<title>Solar Observations from MastCam-Z</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -44,7 +44,7 @@ h1 { font: 600 clamp(2rem, 5vw, 3.4rem)/1.02 var(--cond); letter-spacing: -0.01e
 .lede .m { color: var(--mars); font-weight: 600; }
 .lede .e { color: var(--earth); font-weight: 600; }
 
-/* campaign timeline: the one bold element */
+/* campaign timeline */
 .timeline { margin: 28px 0 8px; }
 .timeline .rail { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(44px, 1fr); gap: 4px;
   overflow-x: auto; padding-bottom: 6px; }
@@ -164,7 +164,7 @@ footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px solid var(--lin
       reprojected to the rover’s view, with the HMI sunspot groups (green: detected by Mastcam-Z, orange: not
       detected).</p>
     <div class="geo">
-      <h3>Orbital Position of Earth and Mars.</h3>
+      <h3>Orbital Position of Earth and Mars</h3>
       <figure><div class="mat" id="fig-geometry"></div></figure>
       <p class="caption">Earth and Mars positions around the Sun (left), and the solar hemispheres each planet could see (right).
         The geometry is the same for both cameras.</p>
@@ -179,13 +179,11 @@ footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px solid var(--lin
   </section>
 
   <section class="notes" id="notes">
-    <h2>Sunspots Detection:</h2>
-    <p>This site is a crude compilation of the preliminary results of comparing sunspot observations from the Martian surface using MastCam-Z/Perserverance rover. 
-      In December 2022, Earth and Mars were at opposition, allowing both planets to view the same side of the Sun. Sunspots identified in MCZ observations are compared with SDO/HMI data as a reference</p>
-    <p>Sunspots observed by Mastcam-Z typically span only a few pixels, meaning their detailed spatial shapes remain unresolved. Rather than measuring physical boundaries directly, 
-      the camera quantifies the light deficit caused by the spot. To validate these measurements, Mastcam-Z view is compared against reference observations SDO/HMI, where umbral 
-      boundaries are identified using standard intensity thresholds relative to the quiet Sun. All reported areas are normalized to millionths of the solar hemisphere (MSH) and corrected for geometric foreshortening.</p>
-    <p>Feature locations are mapped using standard heliographic coordinates, specifically heliographic latitude and Stonyhurst longitude (with 0° oriented toward Earth).</p>
+    <h2>Sunspots Detection</h2>
+    <p>This site presents preliminary results of comparing sunspot observations from the Martian surface using Mastcam-Z. In December 2022, Earth and Mars were at opposition, allowing both planets to view the same side of the Sun. Sunspots identified in MCZ observations are compared with SDO/HMI data as a reference.</p>
+    <p>Sunspots observed by Mastcam-Z typically span only a few pixels, meaning their detailed spatial shapes remain unresolved. Rather than measuring physical boundaries directly, the camera quantifies the light deficit caused by the spot—expressed as the area of a hypothetical, perfectly black feature that would produce an equivalent reduction in light (A<sub>def</sub>). The umbral area (U) is subsequently derived using a calibration factor (k) that accounts for the instrument's specific bandpass characteristics and the typical fractional contribution of the umbra.</p>
+    <p>To validate these measurements, Mastcam-Z data are compared against reference observations from Earth-based solar instruments (such as SDO/HMI), where umbral boundaries are identified using standard intensity thresholds relative to the quiet Sun. All reported areas are normalized to millionths of the solar hemisphere (MSH) and corrected for geometric foreshortening.</p>
+    <p>Feature locations are mapped using standard heliographic coordinates—specifically heliographic latitude and Stonyhurst longitude (with 0° oriented toward Earth)—evaluated at the exact time of the Mastcam-Z observation. All reported detections must meet established statistical significance criteria designed to minimize false positives.</p>
   </section>
 
   <section class="source" id="source" hidden>
@@ -217,8 +215,6 @@ footer { margin: 56px 0 0; padding: 22px 0 40px; border-top: 1px solid var(--lin
   $('title').textContent = S.title;
   $('lede').innerHTML = S.subtitle.replace('Mastcam-Z', '<span class="m">Mastcam-Z</span>')
     .replace('SDO/HMI', '<span class="e">SDO/HMI</span>') + '.';
-  $('funote').textContent = Math.round(C.f_u * 100) + ' %';
-  $('knote').textContent = EYES.map((e) => 'For the ' + short(e).toLowerCase() + ' camera, k = ' + fmt(C.eyes[e].k_umbra) + '.').join(' ');
   $('key').innerHTML = (C.eyes.R ? '<span class="dot"></span>right-camera detection' + (C.eyes.L ? ', ' : '') : '') +
     (C.eyes.L ? '<span class="ring"></span>left-camera detection' : '') + '; dashed days have no observation';
 
